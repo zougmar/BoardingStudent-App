@@ -1,0 +1,384 @@
+import { useState } from 'react';
+import { useApp } from '../context/AppContext';
+import { User, Mail, Phone, GraduationCap, Award, Heart } from 'lucide-react';
+
+const ProfilePage = () => {
+  const { student, updateStudent } = useApp();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: student?.firstName || '',
+    lastName: student?.lastName || '',
+    email: student?.email || '',
+    phone: student?.phone || '',
+    degree: student?.academicBackground.degree || '',
+    field: student?.academicBackground.field || '',
+    university: student?.academicBackground.university || '',
+    graduationYear: student?.academicBackground.graduationYear?.toString() || '',
+    skills: student?.skills.join(', ') || '',
+    interests: student?.interests.join(', ') || '',
+  });
+
+  if (!student) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateStudent({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      academicBackground: {
+        degree: formData.degree,
+        field: formData.field,
+        university: formData.university,
+        graduationYear: formData.graduationYear ? parseInt(formData.graduationYear) : undefined,
+      },
+      skills: formData.skills.split(',').map(s => s.trim()).filter(s => s),
+      interests: formData.interests.split(',').map(i => i.trim()).filter(i => i),
+    });
+    setIsEditing(false);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto animate-fade-in">
+      <div className="section-header">
+        <h1 className="section-title">My Profile</h1>
+        <p className="section-subtitle">Manage your personal information and academic background</p>
+      </div>
+
+      {/* Profile Completion Card */}
+      <div className="card-elevated mb-8 bg-gradient-to-br from-primary-50/50 to-white border-primary-100">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-1">Profile Completion</h2>
+            <p className="text-sm text-gray-600">Complete your profile to increase your matching opportunities</p>
+          </div>
+          <div className="text-right">
+            <span className="text-4xl font-bold bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
+              {student.profileCompletion}%
+            </span>
+          </div>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+          <div
+            className="bg-gradient-to-r from-primary-500 to-primary-600 h-3 rounded-full transition-all duration-500 shadow-sm"
+            style={{ width: `${student.profileCompletion}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Profile Form */}
+      <div className="card-elevated">
+        <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
+            <p className="text-sm text-gray-500 mt-1">Keep your profile up to date</p>
+          </div>
+          {!isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <User size={18} />
+              <span>Edit Profile</span>
+            </button>
+          )}
+        </div>
+
+        {isEditing ? (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  First Name *
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className="input-field"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Last Name *
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="input-field"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="input-field"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="input-field"
+                />
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 pt-8 mt-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
+                <GraduationCap className="text-primary-600" size={24} />
+                <span>Academic Background</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Degree Level *
+                  </label>
+                  <select
+                    name="degree"
+                    value={formData.degree}
+                    onChange={handleChange}
+                    className="input-field"
+                    required
+                  >
+                    <option value="">Select degree</option>
+                    <option value="Bachelor">Bachelor</option>
+                    <option value="Master">Master</option>
+                    <option value="PhD">PhD</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Field of Study *
+                  </label>
+                  <input
+                    type="text"
+                    name="field"
+                    value={formData.field}
+                    onChange={handleChange}
+                    className="input-field"
+                    placeholder="e.g., Computer Science"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    University *
+                  </label>
+                  <input
+                    type="text"
+                    name="university"
+                    value={formData.university}
+                    onChange={handleChange}
+                    className="input-field"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Graduation Year
+                  </label>
+                  <input
+                    type="number"
+                    name="graduationYear"
+                    value={formData.graduationYear}
+                    onChange={handleChange}
+                    className="input-field"
+                    min="2020"
+                    max="2030"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 pt-8 mt-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Skills & Interests</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Skills (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    name="skills"
+                    value={formData.skills}
+                    onChange={handleChange}
+                    className="input-field"
+                    placeholder="e.g., React, TypeScript, Node.js"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Interests (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    name="interests"
+                    value={formData.interests}
+                    onChange={handleChange}
+                    className="input-field"
+                    placeholder="e.g., Web Development, AI"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex space-x-4 pt-4">
+              <button type="submit" className="btn-primary">
+                Save Changes
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditing(false);
+                  setFormData({
+                    firstName: student.firstName,
+                    lastName: student.lastName,
+                    email: student.email,
+                    phone: student.phone || '',
+                    degree: student.academicBackground.degree,
+                    field: student.academicBackground.field,
+                    university: student.academicBackground.university,
+                    graduationYear: student.academicBackground.graduationYear?.toString() || '',
+                    skills: student.skills.join(', '),
+                    interests: student.interests.join(', '),
+                  });
+                }}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl">
+                <div className="p-2 bg-primary-100 rounded-lg">
+                  <User className="text-primary-600" size={20} />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Full Name</p>
+                  <p className="font-semibold text-gray-900">{student.firstName} {student.lastName}</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl">
+                <div className="p-2 bg-primary-100 rounded-lg">
+                  <Mail className="text-primary-600" size={20} />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</p>
+                  <p className="font-semibold text-gray-900">{student.email}</p>
+                </div>
+              </div>
+              {student.phone && (
+                <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl">
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <Phone className="text-primary-600" size={20} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Phone</p>
+                    <p className="font-semibold text-gray-900">{student.phone}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-gray-200 pt-8 mt-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
+                <GraduationCap className="text-primary-600" size={24} />
+                <span>Academic Background</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Degree</p>
+                  <p className="font-medium">{student.academicBackground.degree}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Field</p>
+                  <p className="font-medium">{student.academicBackground.field}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">University</p>
+                  <p className="font-medium">{student.academicBackground.university}</p>
+                </div>
+                {student.academicBackground.graduationYear && (
+                  <div>
+                    <p className="text-sm text-gray-500">Graduation Year</p>
+                    <p className="font-medium">{student.academicBackground.graduationYear}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 pt-8 mt-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
+                <Award className="text-primary-600" size={24} />
+                <span>Skills</span>
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {student.skills.map((skill, index) => (
+                  <span
+                    key={index}
+                    className="px-4 py-2 bg-gradient-to-r from-primary-50 to-primary-100 text-primary-700 rounded-xl text-sm font-semibold border border-primary-200 shadow-sm"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 pt-8 mt-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
+                <Heart className="text-primary-600" size={24} />
+                <span>Interests</span>
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {student.interests.map((interest, index) => (
+                  <span
+                    key={index}
+                    className="px-4 py-2 bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 rounded-xl text-sm font-semibold border border-purple-200 shadow-sm"
+                  >
+                    {interest}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ProfilePage;
