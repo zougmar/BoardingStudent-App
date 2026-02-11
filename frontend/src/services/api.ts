@@ -1,11 +1,11 @@
-// API service layer - ready for integration with IA Backoffice APIs
-// Currently uses mock data from AppContext
+// API service layer - ready for future integration with real backend APIs
+// Right now, the app uses mock data from AppContext instead of calling these
 
 import { Student, Company, Appointment, Message, Resource } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.boarding.com';
 
-// Student API
+// Student API: profile, updates, and CV upload
 export const studentAPI = {
   getProfile: async (): Promise<Student> => {
     // TODO: Replace with actual API call
@@ -39,7 +39,7 @@ export const studentAPI = {
   },
 };
 
-// Companies API
+// Companies API: matching companies and updating match status
 export const companiesAPI = {
   getMatches: async (): Promise<Company[]> => {
     // TODO: Replace with actual API call
@@ -59,7 +59,7 @@ export const companiesAPI = {
   },
 };
 
-// Appointments API
+// Appointments API: listing and creating appointments
 export const appointmentsAPI = {
   getAppointments: async (): Promise<Appointment[]> => {
     // TODO: Replace with actual API call
@@ -80,7 +80,7 @@ export const appointmentsAPI = {
   },
 };
 
-// Messages API
+// Messages API: inbox and sending messages
 export const messagesAPI = {
   getMessages: async (): Promise<Message[]> => {
     // TODO: Replace with actual API call
@@ -101,7 +101,7 @@ export const messagesAPI = {
   },
 };
 
-// Resources API
+// Resources API: informational content for housing, language, etc.
 export const resourcesAPI = {
   getResources: async (): Promise<Resource[]> => {
     // TODO: Replace with actual API call

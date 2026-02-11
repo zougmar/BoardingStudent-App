@@ -2,6 +2,43 @@
 
 A modern Single Page Application (SPA) designed to support students throughout their journey — from profile creation to internship placement and on-site integration. The platform provides visibility, transparency, and autonomy to students, inspired by professional recruitment platforms.
 
+## Value Proposition
+
+The Boarding Student App is a modern, student-facing platform that simplifies and personalizes the journey from profile creation to internship placement and on-site integration. It offers a **single, intuitive interface** where students can manage their profile, explore and track opportunities, book appointments, and access integration resources — all with a recruitment-grade experience inspired by leading hiring platforms.
+
+## Main Problem to Be Solved
+
+Students often face:
+
+- **Limited visibility** into which companies truly match their profile  
+- **Fragmented support** across placement, advising, and integration  
+- **Lack of autonomy and transparency** in their journey  
+
+This project addresses these issues with a unified front-end that centralizes profile management, opportunity matching, and support interactions.
+
+## Expected Impact
+
+- **For Students**
+  - Clear understanding of matching opportunities
+  - Structured follow-up of their application and placement journey
+  - Easy access to practical information (housing, language, local life)
+
+- **For Boarding**
+  - Better-prepared and more engaged students
+  - Reduced back-and-forth and manual coordination
+  - Improved overall student experience
+
+## Success Criteria
+
+- **User Experience**
+  - Frictionless onboarding
+  - High student adoption and engagement
+  - Clear and reassuring journey visibility
+
+- **Technical Execution**
+  - Performant, maintainable front-end
+  - Clean API integration with the IA Backoffice
+
 ## 🎯 Project Overview
 
 The Boarding Student App is a student-facing front-end application that solves common challenges students face:

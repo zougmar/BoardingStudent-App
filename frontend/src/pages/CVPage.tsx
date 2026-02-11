@@ -1,13 +1,22 @@
+// Import React hooks: local state and ref to the hidden file input
 import { useState, useRef } from 'react';
+// Import global app context to access student data and CV upload function
 import { useApp } from '../context/AppContext';
-import { FileText, Upload, Check, X, Download } from 'lucide-react';
+// Icons used in the CV management UI
+import { FileText, Upload, Check, X, Download, Eye } from 'lucide-react';
 
+// Page responsible for uploading, replacing and viewing CV status
 const CVPage = () => {
+  // Get current student object and uploadCV helper from context
   const { student, uploadCV } = useApp();
+  // Whether a CV upload is currently in progress
   const [uploading, setUploading] = useState(false);
+  // Error message shown when validation or upload fails
   const [error, setError] = useState<string | null>(null);
+  // Ref to the hidden file input so we can trigger it from buttons
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Show a loading state while student data is not ready
   if (!student) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -19,11 +28,13 @@ const CVPage = () => {
     );
   }
 
+  // Handle file selection from the hidden input
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Take the first selected file (if any)
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
+    // Validate file type - only accept PDFs
     if (file.type !== 'application/pdf') {
       setError('Please upload a PDF file');
       return;
@@ -39,21 +50,25 @@ const CVPage = () => {
     setUploading(true);
 
     try {
+      // Delegate the actual upload logic to context (could call real API later)
       await uploadCV(file);
     } catch (err) {
       setError('Failed to upload CV. Please try again.');
     } finally {
       setUploading(false);
+      // Reset input value so the same file can be chosen again later if needed
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     }
   };
 
+  // Click handler for the "Replace CV" button - opens hidden file input
   const handleReplace = () => {
     fileInputRef.current?.click();
   };
 
+  // Download the current CV using the stored URL (mock in this app)
   const handleDownload = () => {
     if (student.cvUrl) {
       const link = document.createElement('a');
@@ -64,13 +79,25 @@ const CVPage = () => {
   };
 
   return (
+    // Page container with max width and entrance animation
     <div className="max-w-5xl mx-auto animate-fade-in">
+      {/* Page header */}
       <div className="section-header">
         <h1 className="section-title">CV Management</h1>
         <p className="section-subtitle">Upload and manage your CV for company matching</p>
       </div>
 
       <div className="card-elevated">
+        {/* Shared hidden file input used for both upload and replace actions */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+
+        {/* If a CV is already uploaded, show success state and actions */}
         {student.cvUrl ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -85,6 +112,7 @@ const CVPage = () => {
               </div>
               <div className="flex space-x-3">
                 <button
+                  // Download existing CV
                   onClick={handleDownload}
                   className="btn-secondary flex items-center space-x-2"
                 >
@@ -92,6 +120,15 @@ const CVPage = () => {
                   <span>Download</span>
                 </button>
                 <button
+                  // Open the PDF in a new browser tab for viewing
+                  onClick={() => student.cvUrl && window.open(student.cvUrl, '_blank')}
+                  className="btn-secondary flex items-center space-x-2"
+                >
+                  <Eye size={18} />
+                  <span>View</span>
+                </button>
+                <button
+                  // Open file picker to replace CV
                   onClick={handleReplace}
                   className="btn-primary flex items-center space-x-2"
                   disabled={uploading}
@@ -102,6 +139,7 @@ const CVPage = () => {
               </div>
             </div>
 
+            {/* Information panel explaining CV usage */}
             <div className="border-t border-gray-200 pt-6 mt-6">
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-5">
                 <h4 className="font-bold text-blue-900 mb-2">CV Status</h4>
@@ -112,6 +150,7 @@ const CVPage = () => {
             </div>
           </div>
         ) : (
+          // If no CV yet, show an empty-state encouraging upload
           <div className="text-center py-16">
             <div className="flex justify-center mb-6">
               <div className="p-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl shadow-lg">
@@ -122,14 +161,8 @@ const CVPage = () => {
             <p className="text-gray-600 mb-8 text-lg">
               Upload your CV to enable company matching and increase your opportunities
             </p>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
             <button
+              // Trigger hidden file input when user clicks primary button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
               className="btn-primary flex items-center space-x-2 mx-auto"
@@ -152,6 +185,7 @@ const CVPage = () => {
           </div>
         )}
 
+        {/* Error alert box displayed when something goes wrong */}
         {error && (
           <div className="mt-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-center space-x-3 shadow-sm">
             <div className="p-2 bg-red-100 rounded-lg">
@@ -161,6 +195,7 @@ const CVPage = () => {
           </div>
         )}
 
+        {/* Optional progress bar to visualize upload process */}
         {uploading && (
           <div className="mt-6">
             <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
@@ -171,6 +206,7 @@ const CVPage = () => {
         )}
       </div>
 
+      {/* Static tips to help student improve their CV */}
       <div className="card-elevated mt-8">
         <h3 className="text-xl font-bold text-gray-900 mb-6">CV Tips</h3>
         <ul className="space-y-4">

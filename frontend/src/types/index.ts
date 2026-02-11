@@ -1,9 +1,12 @@
+// Core student profile information used across the app
 export interface Student {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
+  // Optional URL to the student's profile image / avatar
+  avatarUrl?: string;
   academicBackground: {
     degree: string;
     field: string;
@@ -17,8 +20,10 @@ export interface Student {
   journeyStatus: JourneyStatus;
 }
 
+// All possible statuses for the student's journey progress
 export type JourneyStatus = 'profile' | 'matching' | 'internship' | 'integration';
 
+// Company used in the matching view
 export interface Company {
   id: string;
   name: string;
@@ -31,6 +36,7 @@ export interface Company {
   requirements: string[];
 }
 
+// Appointment between student and advisor
 export interface Appointment {
   id: string;
   advisorName: string;
@@ -42,6 +48,7 @@ export interface Appointment {
   notes?: string;
 }
 
+// Message exchanged between student and advisor
 export interface Message {
   id: string;
   senderId: string;
@@ -53,6 +60,7 @@ export interface Message {
   read: boolean;
 }
 
+// Static resource entry (guides, links, etc.)
 export interface Resource {
   id: string;
   title: string;

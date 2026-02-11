@@ -1,5 +1,8 @@
+// Core React types for describing the shape of component props
 import { ReactNode } from 'react';
+// Routing helpers: Link for navigation, useLocation to detect active route
 import { Link, useLocation } from 'react-router-dom';
+// Icons used in the sidebar navigation and mobile header
 import { 
   User, 
   FileText, 
@@ -10,18 +13,26 @@ import {
   Menu,
   X
 } from 'lucide-react';
+// Local state for managing whether the mobile menu is open
 import { useState } from 'react';
+// Global app context hook to display student info in the sidebar
 import { useApp } from '../context/AppContext';
 
+// Props accepted by the Layout component
 interface LayoutProps {
   children: ReactNode;
 }
 
+// Layout wraps all pages with navigation (sidebar + mobile top bar)
 const Layout = ({ children }: LayoutProps) => {
+  // Current route information, used for active link styling
   const location = useLocation();
+  // Track whether the mobile navigation drawer is visible
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Current student from context, used to show name/email and completion
   const { student } = useApp();
 
+  // Main navigation items for the student portal
   const navigation = [
     { name: 'Profile', path: '/profile', icon: User },
     { name: 'CV', path: '/cv', icon: FileText },
@@ -31,11 +42,13 @@ const Layout = ({ children }: LayoutProps) => {
     { name: 'Resources', path: '/resources', icon: BookOpen },
   ];
 
+  // Simple helper to know if a given path matches the current URL
   const isActive = (path: string) => location.pathname === path;
 
   return (
+    // Background and high-level layout container
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      {/* Mobile menu button */}
+      {/* Mobile top bar with logo and hamburger menu */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-2">
@@ -47,6 +60,7 @@ const Layout = ({ children }: LayoutProps) => {
             </h1>
           </div>
           <button
+            // Toggle mobile navigation when button is pressed
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
           >
@@ -123,8 +137,30 @@ const Layout = ({ children }: LayoutProps) => {
             {student && (
               <div className="px-6 py-5 mx-4 mt-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 shadow-sm">
                 <div className="text-sm">
-                  <div className="font-semibold text-gray-900 mb-0.5">{student.firstName} {student.lastName}</div>
-                  <div className="text-gray-500 text-xs mb-3">{student.email}</div>
+                  <div className="flex items-center space-x-3 mb-3">
+                    {student.avatarUrl ? (
+                      <img
+                        src={student.avatarUrl}
+                        alt={`${student.firstName} ${student.lastName}`}
+                        className="w-9 h-9 rounded-full object-cover border border-gray-200 shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center">
+                        <span className="text-xs font-semibold text-primary-700">
+                          {student.firstName.charAt(0)}
+                          {student.lastName.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-semibold text-gray-900 leading-snug">
+                        {student.firstName} {student.lastName}
+                      </div>
+                      <div className="text-gray-500 text-[11px] truncate max-w-[150px]">
+                        {student.email}
+                      </div>
+                    </div>
+                  </div>
                   <div>
                     <div className="flex items-center justify-between text-xs mb-2">
                       <span className="text-gray-600 font-medium">Profile Completion</span>

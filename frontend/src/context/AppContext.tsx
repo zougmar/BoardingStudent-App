@@ -1,6 +1,9 @@
+// React primitives for creating and consuming context + hooks
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+// Shared TypeScript interfaces for the app's data models
 import { Student, Company, Appointment, Message, Resource } from '../types';
 
+// Shape of the global app context that components can consume via useApp()
 interface AppContextType {
   student: Student | null;
   companies: Company[];
@@ -14,8 +17,10 @@ interface AppContextType {
   uploadCV: (file: File) => Promise<void>;
 }
 
+// Create the context object without a default value (we enforce provider usage)
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+// Convenience hook for consuming the app context safely
 export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) {
@@ -24,20 +29,29 @@ export const useApp = () => {
   return context;
 };
 
+// Top-level provider that stores mock data and exposes helpers
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  // Student object (profile, journey, etc.)
   const [student, setStudent] = useState<Student | null>(null);
+  // List of matched companies
   const [companies, setCompanies] = useState<Company[]>([]);
+  // Appointments between student and advisors
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  // Messages exchanged with advisors
   const [messages, setMessages] = useState<Message[]>([]);
+  // Onboarding / integration resources
   const [resources, setResources] = useState<Resource[]>([]);
 
+  // Initialize mock data once when the app loads (can later be replaced by API calls)
   useEffect(() => {
-    // Initialize with mock data
+    // Base mock student used when nothing is stored locally
     const mockStudent: Student = {
       id: '1',
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
+      firstName: 'omar',
+      lastName: 'zouglah',
+      email: 'o.zouglah03@gmail.com',
+      // Sample avatar image for the mock student (can later come from API or upload)
+      avatarUrl: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=300&q=80',
       academicBackground: {
         degree: 'Bachelor',
         field: 'Computer Science',
@@ -126,13 +140,27 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       },
     ];
 
-    setStudent(mockStudent);
+    // Try to restore student profile from localStorage (so avatar and profile
+    // changes persist across refreshes). If anything goes wrong, fall back to
+    // the default mock student.
+    try {
+      const stored = localStorage.getItem('boardingStudent');
+      if (stored) {
+        const parsed = JSON.parse(stored) as Student;
+        setStudent(parsed);
+      } else {
+        setStudent(mockStudent);
+      }
+    } catch {
+      setStudent(mockStudent);
+    }
     setCompanies(mockCompanies);
     setAppointments(mockAppointments);
     setMessages(mockMessages);
     setResources(mockResources);
   }, []);
 
+  // Merge partial updates into the student object and recompute completion
   const updateStudent = (updates: Partial<Student>) => {
     if (student) {
       const updated = { ...student, ...updates };
@@ -147,9 +175,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       if (updated.cvUrl) completion += 25;
       updated.profileCompletion = Math.min(100, completion);
       setStudent(updated);
+      // Persist updated student to localStorage so data (including avatar) survives refresh
+      try {
+        localStorage.setItem('boardingStudent', JSON.stringify(updated));
+      } catch {
+        // Ignore storage errors (e.g., private mode or quota exceeded)
+      }
     }
   };
 
+  // Add a new appointment to the list, generating a simple id
   const addAppointment = (appointment: Omit<Appointment, 'id'>) => {
     const newAppointment: Appointment = {
       ...appointment,
@@ -158,6 +193,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setAppointments([...appointments, newAppointment]);
   };
 
+  // Add a new message to the conversation, attaching id and timestamp
   const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
     const newMessage: Message = {
       ...message,
@@ -167,12 +203,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setMessages([...messages, newMessage]);
   };
 
+  // Update the match status for a single company by id
   const updateCompanyStatus = (companyId: string, status: Company['matchStatus']) => {
     setCompanies(companies.map(c => 
       c.id === companyId ? { ...c, matchStatus: status } : c
     ));
   };
 
+  // Simulate CV upload and attach a temporary URL to the student
   const uploadCV = async (file: File) => {
     // Simulate file upload
     await new Promise(resolve => setTimeout(resolve, 1000));

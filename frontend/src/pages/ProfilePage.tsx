@@ -1,23 +1,47 @@
-import { useState } from 'react';
+// Import React hooks for managing local state and file input refs
+import { useState, useRef } from 'react';
+// Import global application context hook (provides student data and update function)
 import { useApp } from '../context/AppContext';
-import { User, Mail, Phone, GraduationCap, Award, Heart } from 'lucide-react';
+// Import icons used throughout the profile UI
+import { User, Mail, Phone, GraduationCap, Award, Heart, QrCode } from 'lucide-react';
+// QR code component for sharing the profile
+import QRCode from 'react-qr-code';
 
+// Main page component that lets the student view and edit their profile
 const ProfilePage = () => {
+  // Get the current student object and updater from context
   const { student, updateStudent } = useApp();
+  // Track whether the profile is currently in "edit" mode
   const [isEditing, setIsEditing] = useState(false);
+  // Local state that mirrors the editable fields of the student profile
   const [formData, setFormData] = useState({
+    // Basic personal info
     firstName: student?.firstName || '',
     lastName: student?.lastName || '',
     email: student?.email || '',
     phone: student?.phone || '',
+    // Academic background
     degree: student?.academicBackground.degree || '',
     field: student?.academicBackground.field || '',
     university: student?.academicBackground.university || '',
     graduationYear: student?.academicBackground.graduationYear?.toString() || '',
+    // Skills and interests as comma-separated strings for the form inputs
     skills: student?.skills.join(', ') || '',
     interests: student?.interests.join(', ') || '',
   });
+  // Ref for the hidden file input used to upload a new avatar image
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  // Optional local error state for avatar upload issues
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  // Controls visibility of the profile QR code panel
+  const [showQr, setShowQr] = useState(false);
+  // Value encoded in the QR code (profile link with student id)
+  const profileQrValue =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}/profile?id=${student?.id ?? ''}`
+      : `/profile?id=${student?.id ?? ''}`;
 
+  // While student data is loading (null), show a spinner instead of the form
   if (!student) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -29,8 +53,12 @@ const ProfilePage = () => {
     );
   }
 
+  // Handle the main profile form submit (save profile changes)
   const handleSubmit = (e: React.FormEvent) => {
+    // Prevent full page reload
     e.preventDefault();
+
+    // Send updated profile information to context
     updateStudent({
       firstName: formData.firstName,
       lastName: formData.lastName,
@@ -42,24 +70,58 @@ const ProfilePage = () => {
         university: formData.university,
         graduationYear: formData.graduationYear ? parseInt(formData.graduationYear) : undefined,
       },
+      // Convert comma-separated text into arrays, trimming empty values
       skills: formData.skills.split(',').map(s => s.trim()).filter(s => s),
       interests: formData.interests.split(',').map(i => i.trim()).filter(i => i),
     });
+    // Leave edit mode after saving successfully
     setIsEditing(false);
   };
 
+  // Generic handler for all text/select inputs on the form
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle selecting a new avatar image from local files and store it
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Basic validation: allow only image files and keep size reasonable (e.g. 2MB)
+    if (!file.type.startsWith('image/')) {
+      setAvatarError('Please select an image file (JPG, PNG, etc.)');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError('Image must be smaller than 2MB');
+      return;
+    }
+
+    setAvatarError(null);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === 'string') {
+        // Store the base64 data URL in the student profile.
+        // updateStudent will also persist it to localStorage.
+        updateStudent({ avatarUrl: result });
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
+    // Main page container with width and entrance animation
     <div className="max-w-5xl mx-auto animate-fade-in">
+      {/* Page header: title and short description */}
       <div className="section-header">
         <h1 className="section-title">My Profile</h1>
         <p className="section-subtitle">Manage your personal information and academic background</p>
       </div>
 
-      {/* Profile Completion Card */}
+      {/* Profile Completion Card: shows how complete the profile is */}
       <div className="card-elevated mb-8 bg-gradient-to-br from-primary-50/50 to-white border-primary-100">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -80,22 +142,79 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Profile Form */}
+      {/* Profile area: either shows edit form or read-only view */}
       <div className="card-elevated">
         <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
-            <p className="text-sm text-gray-500 mt-1">Keep your profile up to date</p>
+          <div className="flex items-center space-x-4">
+            {student.avatarUrl ? (
+              <img
+                src={student.avatarUrl}
+                alt={`${student.firstName} ${student.lastName}`}
+                className="w-16 h-16 rounded-2xl object-cover border border-gray-200 shadow-sm"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-2xl bg-primary-100 flex items-center justify-center border border-gray-200">
+                <span className="text-lg font-semibold text-primary-700">
+                  {student.firstName.charAt(0)}
+                  {student.lastName.charAt(0)}
+                </span>
+              </div>
+            )}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
+              <p className="text-sm text-gray-500 mt-1">Keep your profile up to date</p>
+              <div className="mt-3 flex items-center space-x-3">
+                <button
+                  type="button"
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="text-sm font-medium text-primary-700 hover:text-primary-800 underline underline-offset-2"
+                >
+                  Change photo
+                </button>
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
+              </div>
+              {avatarError && (
+                <p className="mt-1 text-xs text-red-600">{avatarError}</p>
+              )}
+            </div>
           </div>
-          {!isEditing && (
+          <div className="relative flex items-center space-x-3">
+            {/* QR code action icon, similar style to your example */}
             <button
-              onClick={() => setIsEditing(true)}
-              className="btn-primary flex items-center space-x-2"
+              type="button"
+              onClick={() => setShowQr(!showQr)}
+              className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-white text-stone-500 shadow-md hover:shadow-lg hover:scale-105 border border-gray-200 transition-transform"
+              aria-label="Show profile QR code"
             >
-              <User size={18} />
-              <span>Edit Profile</span>
+              <QrCode size={18} />
             </button>
-          )}
+            {showQr && (
+              <div className="absolute right-0 top-12 z-20 p-3 bg-white rounded-2xl border border-gray-200 shadow-lg">
+                <div className="flex flex-col items-center space-y-2">
+                  <QRCode value={profileQrValue} size={120} />
+                  <p className="text-[10px] text-gray-500 text-center max-w-[160px]">
+                    Scan to open this profile on another device.
+                  </p>
+                </div>
+              </div>
+            )}
+            {/* Show "Edit Profile" button only when not already editing */}
+            {!isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="btn-primary flex items-center space-x-2"
+              >
+                <User size={18} />
+                <span>Edit Profile</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {isEditing ? (
@@ -285,7 +404,15 @@ const ProfilePage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl">
                 <div className="p-2 bg-primary-100 rounded-lg">
-                  <User className="text-primary-600" size={20} />
+                  {student.avatarUrl ? (
+                    <img
+                      src={student.avatarUrl}
+                      alt={`${student.firstName} ${student.lastName}`}
+                      className="w-12 h-12 rounded-xl object-cover border border-white shadow-sm"
+                    />
+                  ) : (
+                    <User className="text-primary-600" size={20} />
+                  )}
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Full Name</p>

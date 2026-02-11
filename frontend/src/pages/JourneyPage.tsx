@@ -1,12 +1,20 @@
+// Import global application context for student journey + messages
 import { useApp } from '../context/AppContext';
+// Icons used for journey steps and messaging UI
 import { CheckCircle, Circle, MessageSquare, Send } from 'lucide-react';
+// Date formatting helper for message timestamps
 import { format } from 'date-fns';
+// Local state hook for managing the input message
 import { useState } from 'react';
 
+// Page that shows the student's journey steps and messaging area
 const JourneyPage = () => {
+  // Get current student, message list and helper to send a new message
   const { student, messages, addMessage } = useApp();
+  // Local state for the text in the "new message" input field
   const [newMessage, setNewMessage] = useState('');
 
+  // If student data isn't loaded yet, show a loading spinner
   if (!student) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -18,6 +26,7 @@ const JourneyPage = () => {
     );
   }
 
+  // Ordered list of journey steps the student goes through
   const journeySteps = [
     { id: 'profile', label: 'Profile', description: 'Complete your profile' },
     { id: 'matching', label: 'Matching', description: 'Get matched with companies' },
@@ -25,13 +34,19 @@ const JourneyPage = () => {
     { id: 'integration', label: 'Integration', description: 'On-site integration support' },
   ];
 
+  // Find the index of the current step based on student.journeyStatus
   const currentStepIndex = journeySteps.findIndex(step => step.id === student.journeyStatus);
+  // Convenience reference to the current step object
   const currentStep = journeySteps[currentStepIndex];
 
+  // Handle sending a message from the student to the advisor team
   const handleSendMessage = (e: React.FormEvent) => {
+    // Prevent default form submit behavior
     e.preventDefault();
+    // Ignore empty messages (just whitespace)
     if (!newMessage.trim()) return;
 
+    // Build a new message payload and delegate to context
     addMessage({
       senderId: student.id,
       senderName: `${student.firstName} ${student.lastName}`,
@@ -41,23 +56,27 @@ const JourneyPage = () => {
       read: false,
     });
 
+    // Clear the input after sending
     setNewMessage('');
   };
 
+  // Count messages that are unread for the current student (received messages)
   const unreadCount = messages.filter(m => !m.read && m.recipientId === student.id).length;
 
   return (
+    // Main page container for journey and messages
     <div className="max-w-7xl mx-auto animate-fade-in">
+      {/* Page header */}
       <div className="section-header">
         <h1 className="section-title">My Journey</h1>
         <p className="section-subtitle">Track your progress and communicate with your advisors</p>
       </div>
 
-      {/* Journey Steps */}
+      {/* Journey Steps: visual timeline of where the student is in the process */}
       <div className="card-elevated mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-8">Journey Progress</h2>
         <div className="relative">
-          {/* Progress Line */}
+          {/* Progress line behind the step icons */}
           <div className="absolute top-8 left-0 right-0 h-1 bg-gray-200 rounded-full">
             <div
               className="h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500 shadow-sm"
@@ -65,12 +84,12 @@ const JourneyPage = () => {
             />
           </div>
 
-          {/* Steps */}
+          {/* Individual step cards laid out horizontally */}
           <div className="relative flex justify-between">
             {journeySteps.map((step, index) => {
-              const isCompleted = index < currentStepIndex;
-              const isCurrent = index === currentStepIndex;
-              const isUpcoming = index > currentStepIndex;
+              const isCompleted = index < currentStepIndex; // step already passed
+              const isCurrent = index === currentStepIndex; // current active step
+              const isUpcoming = index > currentStepIndex; // step not reached yet
 
               return (
                 <div key={step.id} className="flex flex-col items-center flex-1">
@@ -84,8 +103,10 @@ const JourneyPage = () => {
                     }`}
                   >
                     {isCompleted ? (
+                        // Completed steps show a filled checkmark
                       <CheckCircle size={28} />
                     ) : (
+                        // Current and upcoming steps show a circle icon
                       <Circle size={28} fill={isCurrent ? 'currentColor' : 'none'} />
                     )}
                   </div>
@@ -105,7 +126,7 @@ const JourneyPage = () => {
           </div>
         </div>
 
-        {/* Current Status */}
+        {/* Current Status banner summarizing the current journey phase */}
         <div className="mt-10 p-5 bg-gradient-to-r from-primary-50 to-primary-100/50 border-2 border-primary-200 rounded-xl shadow-sm">
           <p className="text-sm text-primary-900 font-medium">
             <span className="font-bold">Current Status:</span> You are in the{' '}
@@ -114,7 +135,7 @@ const JourneyPage = () => {
         </div>
       </div>
 
-      {/* Messaging */}
+      {/* Messaging section: conversation history and input to send new messages */}
       <div className="card-elevated">
         <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900">Messages</h2>
@@ -125,6 +146,7 @@ const JourneyPage = () => {
           )}
         </div>
 
+        {/* Scrollable list of past messages */}
         <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
           {messages.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
@@ -133,6 +155,7 @@ const JourneyPage = () => {
             </div>
           ) : (
             messages.map((message) => {
+              // Determine if message is from the student or advisor
               const isFromStudent = message.senderId === student.id;
               return (
                 <div
@@ -164,6 +187,7 @@ const JourneyPage = () => {
           )}
         </div>
 
+        {/* Input area for composing and sending a new message */}
         <form onSubmit={handleSendMessage} className="flex space-x-2">
           <input
             type="text"
