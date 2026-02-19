@@ -3,7 +3,7 @@
 
 import { Student, Company, Appointment, Message, Resource } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.boarding.com';
+const _API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.boarding.com';
 
 // Student API: profile, updates, and CV upload
 export const studentAPI = {
@@ -14,7 +14,7 @@ export const studentAPI = {
     throw new Error('Not implemented - use AppContext');
   },
 
-  updateProfile: async (updates: Partial<Student>): Promise<Student> => {
+  updateProfile: async (_updates: Partial<Student>): Promise<Student> => {
     // TODO: Replace with actual API call
     // const response = await fetch(`${API_BASE_URL}/students/me`, {
     //   method: 'PATCH',
@@ -25,7 +25,7 @@ export const studentAPI = {
     throw new Error('Not implemented - use AppContext');
   },
 
-  uploadCV: async (file: File): Promise<string> => {
+  uploadCV: async (_file: File): Promise<string> => {
     // TODO: Replace with actual API call
     // const formData = new FormData();
     // formData.append('cv', file);
@@ -48,7 +48,7 @@ export const companiesAPI = {
     throw new Error('Not implemented - use AppContext');
   },
 
-  updateMatchStatus: async (companyId: string, status: Company['matchStatus']): Promise<void> => {
+  updateMatchStatus: async (_companyId: string, _status: Company['matchStatus']): Promise<void> => {
     // TODO: Replace with actual API call
     // await fetch(`${API_BASE_URL}/companies/${companyId}/match-status`, {
     //   method: 'PATCH',
@@ -68,7 +68,7 @@ export const appointmentsAPI = {
     throw new Error('Not implemented - use AppContext');
   },
 
-  createAppointment: async (appointment: Omit<Appointment, 'id'>): Promise<Appointment> => {
+  createAppointment: async (_appointment: Omit<Appointment, 'id'>): Promise<Appointment> => {
     // TODO: Replace with actual API call
     // const response = await fetch(`${API_BASE_URL}/appointments`, {
     //   method: 'POST',
@@ -89,7 +89,7 @@ export const messagesAPI = {
     throw new Error('Not implemented - use AppContext');
   },
 
-  sendMessage: async (message: Omit<Message, 'id' | 'timestamp'>): Promise<Message> => {
+  sendMessage: async (_message: Omit<Message, 'id' | 'timestamp'>): Promise<Message> => {
     // TODO: Replace with actual API call
     // const response = await fetch(`${API_BASE_URL}/messages`, {
     //   method: 'POST',

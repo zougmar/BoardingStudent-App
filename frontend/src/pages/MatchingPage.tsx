@@ -2,8 +2,6 @@
 import { useApp } from '../context/AppContext';
 // Icons used for company cards and status indicators
 import { Building2, MapPin, TrendingUp, CheckCircle, Clock, XCircle } from 'lucide-react';
-// Date formatting helper (used for any date fields if needed)
-import { format } from 'date-fns';
 
 // Page that shows company matches and lets the student accept/decline them
 const MatchingPage = () => {
