@@ -144,8 +144,8 @@ const ProfilePage = () => {
 
       {/* Profile area: either shows edit form or read-only view */}
       <div className="card-elevated">
-        <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8 pb-6 border-b border-gray-200">
+          <div className="flex items-start space-x-4">
             {student.avatarUrl ? (
               <img
                 src={student.avatarUrl}
@@ -184,7 +184,7 @@ const ProfilePage = () => {
               )}
             </div>
           </div>
-          <div className="relative flex items-center space-x-3">
+          <div className="relative flex items-center justify-end space-x-3 md:justify-normal">
             {/* QR code action icon, similar style to your example */}
             <button
               type="button"

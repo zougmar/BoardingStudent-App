@@ -119,7 +119,7 @@ const AppointmentsPage = () => {
     // Main container that centers the content and applies a fade-in animation
     <div className="max-w-7xl mx-auto animate-fade-in">
       {/* Header section with title, subtitle and "Book Appointment" button */}
-      <div className="section-header flex items-center justify-between">
+      <div className="section-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="section-title">Appointments</h1>
           <p className="section-subtitle">Schedule and manage your appointments with advisors</p>
@@ -127,7 +127,7 @@ const AppointmentsPage = () => {
         <button
           // Toggle the booking form when the button is clicked
           onClick={() => setShowBookingForm(!showBookingForm)}
-          className="btn-primary flex items-center space-x-2"
+          className="btn-primary flex items-center justify-center space-x-2"
         >
           <Plus size={18} />
           <span>Book Appointment</span>
@@ -235,7 +235,7 @@ const AppointmentsPage = () => {
                 </select>
               </div>
             </div>
-            <div className="flex space-x-4 pt-4">
+            <div className="flex flex-wrap gap-4 pt-4">
               {/* Submit button to create the new appointment */}
               <button type="submit" className="btn-primary">
                 Book Appointment
@@ -282,7 +282,7 @@ const AppointmentsPage = () => {
                       {/* Visual status indicator (Scheduled / Completed / Cancelled) */}
                       {getStatusBadge(appointment.status)}
                     </div>
-                    <div className="flex items-center space-x-6 text-sm">
+                    <div className="flex flex-wrap items-center gap-3 text-sm">
                       {/* Date row with calendar icon */}
                       <span className="flex items-center space-x-2 text-gray-700">
                         <Calendar size={16} />
@@ -339,7 +339,7 @@ const AppointmentsPage = () => {
                       {/* Status badge (usually Completed or Cancelled for past) */}
                       {getStatusBadge(appointment.status)}
                     </div>
-                    <div className="flex items-center space-x-6 text-sm">
+                    <div className="flex flex-wrap items-center gap-3 text-sm">
                       {/* Date information */}
                       <span className="flex items-center space-x-2 text-gray-700">
                         <Calendar size={16} />

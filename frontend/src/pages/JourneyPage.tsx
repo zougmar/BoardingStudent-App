@@ -75,54 +75,100 @@ const JourneyPage = () => {
       {/* Journey Steps: visual timeline of where the student is in the process */}
       <div className="card-elevated mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-8">Journey Progress</h2>
-        <div className="relative">
-          {/* Progress line behind the step icons */}
-          <div className="absolute top-8 left-0 right-0 h-1 bg-gray-200 rounded-full">
-            <div
-              className="h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500 shadow-sm"
-              style={{ width: `${(currentStepIndex / (journeySteps.length - 1)) * 100}%` }}
-            />
-          </div>
 
-          {/* Individual step cards laid out horizontally */}
-          <div className="relative flex justify-between">
-            {journeySteps.map((step, index) => {
-              const isCompleted = index < currentStepIndex; // step already passed
-              const isCurrent = index === currentStepIndex; // current active step
-              const isUpcoming = index > currentStepIndex; // step not reached yet
+        {/* Mobile: vertical timeline for better readability */}
+        <div className="space-y-4 md:hidden">
+          {journeySteps.map((step, index) => {
+            const isCompleted = index < currentStepIndex;
+            const isCurrent = index === currentStepIndex;
 
-              return (
-                <div key={step.id} className="flex flex-col items-center flex-1">
-                  <div
-                    className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all shadow-md ${
-                      isCompleted
-                        ? 'bg-gradient-to-br from-primary-600 to-primary-700 border-primary-700 text-white'
-                        : isCurrent
-                        ? 'bg-gradient-to-br from-primary-50 to-primary-100 border-primary-600 text-primary-700 scale-110'
-                        : 'bg-white border-gray-300 text-gray-400'
+            return (
+              <div
+                key={step.id}
+                className={`flex items-start space-x-3 p-4 rounded-xl border transition-colors ${
+                  isCurrent
+                    ? 'bg-primary-50 border-primary-300'
+                    : isCompleted
+                    ? 'bg-white border-emerald-200'
+                    : 'bg-white border-gray-200'
+                }`}
+              >
+                <div className="mt-1">
+                  {isCompleted ? (
+                    <CheckCircle className="text-emerald-600" size={24} />
+                  ) : (
+                    <Circle
+                      className={isCurrent ? 'text-primary-600' : 'text-gray-300'}
+                      size={24}
+                      fill={isCurrent ? 'currentColor' : 'none'}
+                    />
+                  )}
+                </div>
+                <div>
+                  <h3
+                    className={`font-semibold ${
+                      isCurrent ? 'text-primary-700' : isCompleted ? 'text-gray-900' : 'text-gray-500'
                     }`}
                   >
-                    {isCompleted ? (
-                        // Completed steps show a filled checkmark
-                      <CheckCircle size={28} />
-                    ) : (
-                        // Current and upcoming steps show a circle icon
-                      <Circle size={28} fill={isCurrent ? 'currentColor' : 'none'} />
-                    )}
-                  </div>
-                  <div className="mt-6 text-center">
-                    <h3
-                      className={`font-bold text-lg ${
-                        isCurrent ? 'text-primary-700' : isCompleted ? 'text-gray-900' : 'text-gray-400'
+                    {step.label}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">{step.description}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop / tablet: horizontal timeline */}
+        <div className="hidden md:block">
+          <div className="relative">
+            {/* Progress line behind the step icons */}
+            <div className="absolute top-8 left-0 right-0 h-1 bg-gray-200 rounded-full">
+              <div
+                className="h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500 shadow-sm"
+                style={{ width: `${(currentStepIndex / (journeySteps.length - 1)) * 100}%` }}
+              />
+            </div>
+
+            {/* Individual step cards laid out horizontally */}
+            <div className="relative flex justify-between">
+              {journeySteps.map((step, index) => {
+                const isCompleted = index < currentStepIndex; // step already passed
+                const isCurrent = index === currentStepIndex; // current active step
+
+                return (
+                  <div key={step.id} className="flex flex-col items-center flex-1">
+                    <div
+                      className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all shadow-md ${
+                        isCompleted
+                          ? 'bg-gradient-to-br from-primary-600 to-primary-700 border-primary-700 text-white'
+                          : isCurrent
+                          ? 'bg-gradient-to-br from-primary-50 to-primary-100 border-primary-600 text-primary-700 scale-110'
+                          : 'bg-white border-gray-300 text-gray-400'
                       }`}
                     >
-                      {step.label}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-2">{step.description}</p>
+                      {isCompleted ? (
+                        // Completed steps show a filled checkmark
+                        <CheckCircle size={28} />
+                      ) : (
+                        // Current and upcoming steps show a circle icon
+                        <Circle size={28} fill={isCurrent ? 'currentColor' : 'none'} />
+                      )}
+                    </div>
+                    <div className="mt-6 text-center">
+                      <h3
+                        className={`font-bold text-lg ${
+                          isCurrent ? 'text-primary-700' : isCompleted ? 'text-gray-900' : 'text-gray-400'
+                        }`}
+                      >
+                        {step.label}
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-2">{step.description}</p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -137,7 +183,7 @@ const JourneyPage = () => {
 
       {/* Messaging section: conversation history and input to send new messages */}
       <div className="card-elevated">
-        <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900">Messages</h2>
           {unreadCount > 0 && (
             <span className="px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-full text-sm font-bold shadow-md">
@@ -188,7 +234,7 @@ const JourneyPage = () => {
         </div>
 
         {/* Input area for composing and sending a new message */}
-        <form onSubmit={handleSendMessage} className="flex space-x-2">
+        <form onSubmit={handleSendMessage} className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             value={newMessage}
@@ -196,7 +242,7 @@ const JourneyPage = () => {
             placeholder="Type your message..."
             className="flex-1 input-field"
           />
-          <button type="submit" className="btn-primary flex items-center space-x-2">
+          <button type="submit" className="btn-primary flex items-center justify-center space-x-2">
             <Send size={18} />
             <span>Send</span>
           </button>

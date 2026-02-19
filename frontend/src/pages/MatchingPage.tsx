@@ -88,8 +88,8 @@ const MatchingPage = () => {
             >
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
                 <div className="flex-1">
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-center space-x-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+                    <div className="flex items-start space-x-4">
                       {company.logo ? (
                         // Show company logo when provided
                         <img
@@ -105,7 +105,7 @@ const MatchingPage = () => {
                       )}
                       <div>
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">{company.name}</h3>
-                        <div className="flex items-center space-x-4 text-sm text-gray-600">
+                        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
                           <span className="flex items-center space-x-2 px-3 py-1 bg-gray-100 rounded-lg">
                             <MapPin size={14} className="text-primary-600" />
                             <span className="font-medium">{company.location}</span>

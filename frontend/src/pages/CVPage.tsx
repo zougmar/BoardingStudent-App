@@ -100,8 +100,8 @@ const CVPage = () => {
         {/* If a CV is already uploaded, show success state and actions */}
         {student.cvUrl ? (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div className="flex items-start space-x-4">
                 <div className="p-4 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl shadow-md">
                   <Check className="text-emerald-700" size={28} />
                 </div>
@@ -110,7 +110,7 @@ const CVPage = () => {
                   <p className="text-sm text-gray-600">Your CV is connected to the matching process</p>
                 </div>
               </div>
-              <div className="flex space-x-3">
+              <div className="flex flex-wrap gap-3 md:justify-end">
                 <button
                   // Download existing CV
                   onClick={handleDownload}
