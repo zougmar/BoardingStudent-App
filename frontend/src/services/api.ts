@@ -3,8 +3,6 @@
 
 import { Student, Company, Appointment, Message, Resource } from '../types';
 
-const _API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.boarding.com';
-
 // Student API: profile, updates, and CV upload
 export const studentAPI = {
   getProfile: async (): Promise<Student> => {
