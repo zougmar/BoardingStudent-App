@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { User, Building2, ArrowRight } from 'lucide-react';
+import { User, ArrowRight } from 'lucide-react';
 
 export default function LoginChoicePage() {
   return (
@@ -21,11 +21,11 @@ export default function LoginChoicePage() {
             Welcome back
           </h1>
           <p className="text-gray-500 text-lg max-w-md mx-auto">
-            Choose how you want to sign in to your account
+            Sign in to your student account
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+        <div className="w-full max-w-md">
           <Link
             to="/login/student"
             className="group relative flex flex-col items-center p-8 md:p-10 bg-white rounded-2xl border-2 border-gray-100 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/10 transition-all duration-300 overflow-hidden"
@@ -39,32 +39,14 @@ export default function LoginChoicePage() {
               Manage your profile, CV, and company matches
             </p>
             <span className="relative inline-flex items-center gap-2 text-primary-600 font-semibold group-hover:gap-3 transition-all">
-              Sign in as Student
-              <ArrowRight size={18} className="group-hover:translate-x-0.5" />
-            </span>
-          </Link>
-
-          <Link
-            to="/login/company"
-            className="group relative flex flex-col items-center p-8 md:p-10 bg-white rounded-2xl border-2 border-gray-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative w-16 h-16 rounded-2xl bg-emerald-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-              <Building2 className="text-emerald-600" size={32} strokeWidth={2} />
-            </div>
-            <h2 className="relative text-xl font-bold text-gray-900 mb-2">Company</h2>
-            <p className="relative text-gray-500 text-sm text-center mb-6">
-              View matched candidates and manage applications
-            </p>
-            <span className="relative inline-flex items-center gap-2 text-emerald-600 font-semibold group-hover:gap-3 transition-all">
-              Sign in as Company
+              Sign in
               <ArrowRight size={18} className="group-hover:translate-x-0.5" />
             </span>
           </Link>
         </div>
 
         <p className="mt-10 text-center text-sm text-gray-400">
-          New here? <Link to="/register" className="text-primary-600 font-medium hover:underline">Create a student account</Link>
+          New here? <Link to="/register" className="text-primary-600 font-medium hover:underline">Create an account</Link>
         </p>
       </main>
     </div>
