@@ -9,6 +9,7 @@ import { errorHandler } from './middleware';
 import authRoutes from './routes/auth';
 import studentsRoutes from './routes/students';
 import companiesRoutes from './routes/companies';
+import companyDashboardRoutes from './routes/companyDashboard';
 import appointmentsRoutes from './routes/appointments';
 import messagesRoutes from './routes/messages';
 import resourcesRoutes from './routes/resources';
@@ -36,6 +37,7 @@ async function main() {
   app.use('/api/auth', authRoutes);
   app.use('/api/students', studentsRoutes);
   app.use('/api/companies', companiesRoutes);
+  app.use('/api/company', companyDashboardRoutes);
   app.use('/api/appointments', appointmentsRoutes);
   app.use('/api/messages', messagesRoutes);
   app.use('/api/resources', resourcesRoutes);

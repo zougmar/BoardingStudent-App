@@ -3,7 +3,61 @@
 
 import { Student, Company, Appointment, Message, Resource } from '../types';
 
-// Student API: profile, updates, and CV upload
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
+function getAuthToken(): string | null {
+  try {
+    return localStorage.getItem('boardingToken');
+  } catch {
+    return null;
+  }
+}
+
+// Company dashboard: matched students (for company users)
+export interface MatchedStudentItem {
+  matchId: string;
+  matchStatus: 'pending' | 'matched' | 'rejected' | 'accepted';
+  updatedAt: string;
+  student: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    academicBackground: { degree?: string; field?: string; university?: string; graduationYear?: number };
+    skills: string[];
+    interests: string[];
+    profileCompletion: number;
+    cvUrl?: string;
+    journeyStatus: string;
+  };
+}
+
+export const companyDashboardAPI = {
+  getMatchedStudents: async (): Promise<MatchedStudentItem[]> => {
+    if (!API_BASE) return [];
+    const token = getAuthToken();
+    const res = await fetch(`${API_BASE}/api/company/matched-students`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) throw new Error('Failed to load matched students');
+    return res.json();
+  },
+
+  updateMatchStatus: async (matchId: string, status: MatchedStudentItem['matchStatus']): Promise<void> => {
+    if (!API_BASE) return;
+    const token = getAuthToken();
+    const res = await fetch(`${API_BASE}/api/company/matches/${matchId}/status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) throw new Error('Failed to update status');
+  },
+};
 export const studentAPI = {
   getProfile: async (): Promise<Student> => {
     // TODO: Replace with actual API call

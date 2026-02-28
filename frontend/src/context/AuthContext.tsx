@@ -19,6 +19,7 @@ interface AuthContextType {
 }
 
 const AUTH_STORAGE_KEY = 'boardingAuth';
+const TOKEN_STORAGE_KEY = 'boardingToken';
 const USERS_STORAGE_KEY = 'boardingUsers';
 const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -100,6 +101,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setUser(u);
         localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(u));
+        if (data.token) localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
         return { success: true };
       } catch (err) {
         return { success: false, error: 'Network error. Try again.' };
@@ -173,6 +175,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
   }, []);
 
   return (
