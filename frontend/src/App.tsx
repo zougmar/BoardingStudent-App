@@ -4,7 +4,9 @@ import { AppProvider } from './context/AppContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import CompanyLayout from './components/CompanyLayout';
-import LoginPage from './pages/LoginPage';
+import LoginChoicePage from './pages/LoginChoicePage';
+import StudentLoginPage from './pages/StudentLoginPage';
+import CompanyLoginPage from './pages/CompanyLoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import CVPage from './pages/CVPage';
@@ -59,7 +61,9 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginChoicePage />} />
+          <Route path="/login/student" element={<StudentLoginPage />} />
+          <Route path="/login/company" element={<CompanyLoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/company" element={
             <ProtectedRoute>
