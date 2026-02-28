@@ -3,7 +3,6 @@ import { AuthProvider } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
-import LoginChoicePage from './pages/LoginChoicePage';
 import StudentLoginPage from './pages/StudentLoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
@@ -36,8 +35,7 @@ function App() {
     <AuthProvider>
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
-          <Route path="/login" element={<LoginChoicePage />} />
-          <Route path="/login/student" element={<StudentLoginPage />} />
+          <Route path="/login" element={<StudentLoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/*" element={
             <ProtectedRoute>
