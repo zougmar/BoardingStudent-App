@@ -37,7 +37,7 @@ export const studentAPI = {
   },
 };
 
-// Companies API: matching companies and updating match status
+// companies API: matching companies and updating match status
 export const companiesAPI = {
   getMatches: async (): Promise<Company[]> => {
     // TODO: Replace with actual API call

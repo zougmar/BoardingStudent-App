@@ -11,12 +11,14 @@ import {
   MapPin, 
   BookOpen,
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 // Local state for managing whether the mobile menu is open
 import { useState } from 'react';
 // Global app context hook to display student info in the sidebar
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 
 // Props accepted by the Layout component
 interface LayoutProps {
@@ -29,8 +31,8 @@ const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   // Track whether the mobile navigation drawer is visible
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Current student from context, used to show name/email and completion
   const { student } = useApp();
+  const { logout } = useAuth();
 
   // Main navigation items for the student portal
   const navigation = [
@@ -42,8 +44,28 @@ const Layout = ({ children }: LayoutProps) => {
     { name: 'Resources', path: '/resources', icon: BookOpen },
   ];
 
+  // Track if custom logo failed to load so we show "BS" fallback
+  const [logoError, setLogoError] = useState(false);
+
   // Simple helper to know if a given path matches the current URL
   const isActive = (path: string) => location.pathname === path;
+
+  const logoContent = (size: 'sm' | 'md') => (
+    <div className={size === 'sm' ? 'w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden bg-white shrink-0' : 'w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden bg-white shadow-md shrink-0'}>
+      {!logoError ? (
+        <img
+          src="/images/logo.png"
+          alt="Boarding Student"
+          className={size === 'sm' ? 'w-8 h-8 object-contain' : 'w-10 h-10 object-contain'}
+          onError={() => setLogoError(true)}
+        />
+      ) : (
+        <div className={size === 'sm' ? 'w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center' : 'w-10 h-10 rounded-xl bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center'}>
+          <span className={`text-white font-bold ${size === 'sm' ? 'text-sm' : ''}`}>BS</span>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     // Background and high-level layout container
@@ -52,9 +74,7 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-primary-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">BS</span>
-            </div>
+            {logoContent('sm')}
             <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
               Boarding Student
             </h1>
@@ -71,8 +91,8 @@ const Layout = ({ children }: LayoutProps) => {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-white/95 backdrop-blur-lg pt-16 animate-fade-in">
-          <nav className="flex flex-col p-4 space-y-1">
+        <div className="lg:hidden fixed inset-0 z-40 bg-white/95 backdrop-blur-lg pt-16 animate-fade-in flex flex-col">
+          <nav className="flex flex-col p-4 space-y-1 flex-1">
             {navigation.map((item) => {
               const Icon = item.icon;
               return (
@@ -92,6 +112,15 @@ const Layout = ({ children }: LayoutProps) => {
               );
             })}
           </nav>
+          <div className="p-4 border-t border-gray-200">
+            <button
+              onClick={() => { setMobileMenuOpen(false); logout(); }}
+              className="flex items-center space-x-3 px-4 py-3.5 rounded-xl w-full text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors font-medium"
+            >
+              <LogOut size={20} />
+              <span>Log out</span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -101,9 +130,7 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="flex-1 flex flex-col pt-6 pb-6 overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-6 mb-8">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold">BS</span>
-                </div>
+                {logoContent('md')}
                 <div>
                   <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
                     Boarding Student
@@ -174,6 +201,13 @@ const Layout = ({ children }: LayoutProps) => {
                     </div>
                   </div>
                 </div>
+                <button
+                  onClick={logout}
+                  className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors border border-gray-200 hover:border-red-200"
+                >
+                  <LogOut size={14} />
+                  Log out
+                </button>
               </div>
             )}
           </div>
