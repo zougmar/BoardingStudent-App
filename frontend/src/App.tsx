@@ -59,7 +59,7 @@ function CompanyRouteGuard() {
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/login" element={<LoginChoicePage />} />
           <Route path="/login/student" element={<StudentLoginPage />} />

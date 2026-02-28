@@ -1,181 +1,77 @@
 # Boarding Student App
 
-A modern Single Page Application (SPA) designed to support students throughout their journey — from profile creation to internship placement and on-site integration. The platform provides visibility, transparency, and autonomy to students, inspired by professional recruitment platforms.
-
-## Value Proposition
-
-The Boarding Student App is a modern, student-facing platform that simplifies and personalizes the journey from profile creation to internship placement and on-site integration. It offers a **single, intuitive interface** where students can manage their profile, explore and track opportunities, book appointments, and access integration resources — all with a recruitment-grade experience inspired by leading hiring platforms.
-
-## Main Problem to Be Solved
-
-Students often face:
-
-- **Limited visibility** into which companies truly match their profile  
-- **Fragmented support** across placement, advising, and integration  
-- **Lack of autonomy and transparency** in their journey  
-
-This project addresses these issues with a unified front-end that centralizes profile management, opportunity matching, and support interactions.
-
-## Expected Impact
-
-- **For Students**
-  - Clear understanding of matching opportunities
-  - Structured follow-up of their application and placement journey
-  - Easy access to practical information (housing, language, local life)
-
-- **For Boarding**
-  - Better-prepared and more engaged students
-  - Reduced back-and-forth and manual coordination
-  - Improved overall student experience
-
-## Success Criteria
-
-- **User Experience**
-  - Frictionless onboarding
-  - High student adoption and engagement
-  - Clear and reassuring journey visibility
-
-- **Technical Execution**
-  - Performant, maintainable front-end
-  - Clean API integration with the IA Backoffice
-
-## 🎯 Project Overview
-
-The Boarding Student App is a student-facing front-end application that solves common challenges students face:
-
-- **Limited visibility** into which companies match their profile
-- **Fragmented support** across placement, advising, and integration
-- **Lack of transparency** and control over their journey
-
-The application offers one intuitive interface where students can manage their profile, opportunities, and support interactions.
+A modern, front-end-only Single Page Application for students and companies: profile management, matching, appointments, and resources. **Professional login** with Student and Company options; runs standalone with demo accounts.
 
 ## ✨ Features
 
-### Core Features
-
-- **Student Profile Management** - Create and edit student profile with academic background, skills, and interests
-- **CV Upload & Management** - Upload and manage CV (PDF format) connected to the matching process
-- **Company Matching Visualization** - Display matching companies with match scores and status
-- **Appointment Booking** - Book appointments with advisors and view upcoming/past appointments
-- **Messaging & Journey Tracking** - Real-time messaging and visual journey tracking
-- **Boarding Resources Access** - Housing information, language support, and integration resources
+- **Login** – Choose **Student** or **Company**; sign in with demo or registered accounts
+- **Student** – Profile, CV, company matching, appointments, journey, resources
+- **Company** – Dashboard with stats and matched-students section (demo mode)
+- **Register** – Create a student account (stored in browser)
+- Responsive, modern UI with Tailwind CSS
 
 ## 🚀 Quick Start
 
-### Prerequisites
+**Prerequisites:** Node.js 18+
 
-- Node.js 18+ and npm/yarn/pnpm
-
-### Installation & Running
-
-1. **Navigate to the frontend directory:**
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser and navigate to:**
-   ```
-   http://localhost:5173
-   ```
-
-## 📁 Project Structure
-
-```
-BoardingStudent-App/
-├── frontend/              # React + TypeScript frontend application
-│   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── context/       # React Context for state management
-│   │   ├── pages/         # Page components
-│   │   ├── services/      # API service layer
-│   │   └── types/         # TypeScript type definitions
-│   ├── package.json
-│   └── README.md          # Detailed frontend documentation
-└── README.md              # This file
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-## 🛠️ Technology Stack
+Open **http://localhost:5173**.
 
-- **React 18** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **React Router** - Client-side routing
-- **Tailwind CSS** - Utility-first CSS framework
-- **Lucide React** - Icon library
-- **date-fns** - Date formatting utilities
+### Demo login
 
-## 📦 Available Scripts
+| Role    | Email                     | Password |
+|--------|---------------------------|----------|
+| Student| `student@boarding.com`    | `demo123`|
+| Student| `o.zouglah03@gmail.com`   | `demo123`|
+| Company| `company@techcorp.com`   | `demo123`|
+| Company| `company@innovatelab.com`| `demo123`|
+
+New users can **Register** (student only); data is stored in the browser.
+
+## 📁 Project structure
+
+```
+frontend/
+├── src/
+│   ├── components/   # Layout, ProtectedRoute, CompanyLayout, etc.
+│   ├── context/      # AuthContext, AppContext
+│   ├── pages/        # Login, Register, Profile, CV, Matching, etc.
+│   ├── services/     # api.ts (placeholders for future backend)
+│   └── types/
+├── public/
+└── package.json
+```
+
+## 📦 Scripts
 
 From the `frontend` directory:
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+- `npm run dev` – Development server
+- `npm run build` – Production build
+- `npm run preview` – Preview production build
+- `npm run lint` – ESLint
 
-## 🔌 API Integration
+## 🌐 Deploy (Vercel)
 
-The application is designed with API-ready architecture. The `src/services/api.ts` file contains placeholder functions ready for integration with backend APIs.
+1. Connect the repo to Vercel.
+2. Set **Root Directory** to `frontend`.
+3. Build: `npm run build`, Output: `dist`.
+4. Deploy. No environment variables required; the app uses demo login and in-browser data.
 
-### Environment Variables
+## 🛠️ Stack
 
-Create a `.env` file in the `frontend` directory:
-
-```env
-VITE_API_BASE_URL=https://api.boarding.com
-```
-
-## 📱 Application Pages
-
-1. **Profile** (`/profile`) - Manage personal information and academic background
-2. **CV** (`/cv`) - Upload and manage CV
-3. **Matching** (`/matching`) - View and manage company matches
-4. **Appointments** (`/appointments`) - Book and view appointments
-5. **Journey** (`/journey`) - Track progress and message advisors
-6. **Resources** (`/resources`) - Access housing, language, and integration resources
-
-## 🧪 Mock Data
-
-The application currently uses mock data initialized in `AppContext`. This allows for full functionality testing without a backend. When integrating with real APIs, replace the mock data initialization with actual API calls.
-
-## 📝 Development Notes
-
-- TypeScript strict mode enabled
-- ESLint for code quality
-- Mobile-first responsive design
-- React Context API for state management
-
-## 📚 Documentation
-
-For more detailed documentation, see the [frontend README](./frontend/README.md).
-
-## 🚧 Future Enhancements
-
-- Real-time notifications
-- File preview for CV
-- Advanced filtering for companies
-- Calendar integration
-- Email notifications
-- Multi-language support
+- React 18, TypeScript, Vite  
+- React Router, Tailwind CSS, Lucide React, date-fns  
 
 ## 📄 License
 
-This project is proprietary software for Boarding services.
-
-## 👥 Support
-
-For questions or issues, please contact the development team or refer to the Resources page within the application.
+Proprietary – Boarding services.
 
 ---
 
-Built with ❤️ for students using Boarding services
+Built for students using Boarding services.

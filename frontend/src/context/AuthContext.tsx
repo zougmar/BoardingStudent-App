@@ -19,9 +19,7 @@ interface AuthContextType {
 }
 
 const AUTH_STORAGE_KEY = 'boardingAuth';
-const TOKEN_STORAGE_KEY = 'boardingToken';
 const USERS_STORAGE_KEY = 'boardingUsers';
-const API_URL = import.meta.env.VITE_API_URL || '';
 
 const SEED_STUDENTS: Array<{ id: string; email: string; password: string; firstName: string; lastName: string }> = [
   { id: 'seed-1', email: 'student@boarding.com', password: 'demo123', firstName: 'Demo', lastName: 'Student' },
@@ -78,35 +76,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = useCallback(async (email: string, password: string, accountType: 'student' | 'company' = 'student') => {
     const normalizedEmail = email.trim().toLowerCase();
     const pwd = password.trim();
-
-    if (API_URL) {
-      try {
-        const res = await fetch(`${API_URL}/api/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: normalizedEmail, password: pwd, accountType }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          return { success: false, error: data.error || 'Login failed' };
-        }
-        const u: User = {
-          id: data.user.id,
-          email: data.user.email,
-          firstName: data.user.firstName,
-          lastName: data.user.lastName,
-          role: data.user.role,
-          companyId: data.user.companyId,
-          companyName: data.user.companyName,
-        };
-        setUser(u);
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(u));
-        if (data.token) localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
-        return { success: true };
-      } catch (err) {
-        return { success: false, error: 'Network error. Try again.' };
-      }
-    }
 
     if (accountType === 'company') {
       const seed = SEED_COMPANIES.find(u => u.email.toLowerCase() === normalizedEmail);
@@ -175,7 +144,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem(AUTH_STORAGE_KEY);
-    localStorage.removeItem(TOKEN_STORAGE_KEY);
   }, []);
 
   return (
