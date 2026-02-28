@@ -2,7 +2,11 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Building2, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export default function CompanyLayout() {
+interface CompanyLayoutProps {
+  children?: React.ReactNode;
+}
+
+export default function CompanyLayout({ children }: CompanyLayoutProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -33,7 +37,7 @@ export default function CompanyLayout() {
         </div>
       </header>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Outlet />
+        {children ?? <Outlet />}
       </main>
     </div>
   );
